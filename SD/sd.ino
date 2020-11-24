@@ -35,15 +35,14 @@ byte Current_Buffer = 1;
 File file;
 int flrdsz;
 
-void open_Sound_File_SD() {
+void open_Sound_File_SD(String flnm) {
   sdSPI.begin(SDCARD_CLK, SDCARD_MISO, SDCARD_MOSI, SDCARD_SS);
 
   if (!SD.begin(SDCARD_SS, sdSPI)) {
     Serial.println(F("Cannot init SD"));
   }
-  // sample is 11025 Hz 8 bit PCM in .WAV container
-  // dowloaded from http://www.nch.com.au/acm/11k8bitpcm.wav
-  file = SD.open("/11k8bitpcm.wav");
+
+  file = SD.open( flnm );
   if (!file) {
     Serial.println(F("cannot open file"));
   }
@@ -212,7 +211,11 @@ void setup()
   Serial.begin(115200);
   Serial.print("Total samples: ");
   Serial.println(totalSamples);
-  open_Sound_File_SD();
+
+
+  // sample is 11025 Hz 8 bit PCM in .WAV container
+  // dowloaded from http://www.nch.com.au/acm/11k8bitpcm.wav
+  open_Sound_File_SD("/11k8bitpcm.wav");
   startULPSound();
 
   xTaskCreatePinnedToCore(Fill_Buffer, "Fill Buffer", 1024 * 6, NULL, 2, &Fill_Buffer_Handle, 1);
